@@ -1,19 +1,19 @@
-# return P(s_i = j|s_ni)
-c_cond_den_s_i_given_s_ni <- function(s, i, al) {
+# return P(s_i = j|s_ni) unnormalized
+c_get_p_si <- function(s, i, al) {
     n <- length(s)
     ind <- 1:n
     ind_ni <- ind[ind != i]
     s_ni <- s[ind_ni]
     k <- length(unique(s_ni))
-    p <- rep(0, k+1)
+    p_unnorm <- rep(0, k+1)
     n_ni <- rep(0, k)
     for (j in 1:k) {
         n_ni[j] <- length(s_ni == j)
-        p[j] <- n_ni[j] / (al + n -1)
+        p_unnorm[j] <- n_ni[j] / (al + n -1)
     }
-    p[k+1] <- al / (al + n - 1)
+    p_unnorm[k+1] <- al / (al + n - 1)
 
-    return(p)
+    return(p_unnorm)
 }
 
 # y_i | mu, tau ~ N(mu, tau^(-1))
@@ -32,7 +32,7 @@ c_get_al_n <- function(n, a_tau) {
 }
 
 c_get_bet_n <- function(n, kap_inv, ybar, s_sq, a_mu, b_tau, mu_n) {
-    bet_n <- .5 * (n * (s_sq + ybar^2) + kap_inv * a_mu - (n + kap_inv) * mu_n^2)
+    bet_n <- .5 * (n * (s_sq + ybar^2) + kap_inv * a_mu^2 - (n + kap_inv) * mu_n^2)
 
     return(bet_n)
 }
