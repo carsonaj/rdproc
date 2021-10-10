@@ -24,6 +24,34 @@
 #---------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------
 
+# posterior predictive density estimate
+# yn is y_new, the new y value to be drawn given the data y
+#' @export
+bppd <- function(yn, y, samples) {
+    k <- length(samples[[1]]$pi)
+    N <- length(samples)
+
+    yn_g_theta <- rep(0, N)
+    for (i in 1:N) {
+        yn_g_theta_i <- rep(0, k)
+        for (j in 1:k) {
+            pi <- samples[[i]]$pi
+            mu <- samples[[i]]$mu
+            tau <- samples[[i]]$tau
+            yn_g_theta_i[j] = pi[j] * dnorm(yn, mu[j], tau[j]^(-.5))
+        }
+
+        yn_g_theta[i] <- sum(yn_g_theta_i)
+    }
+
+    yn_g_y <- mean(yn_g_theta)
+
+    return(yn_g_y)
+}
+#---------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------
+#---------------------------------------------------------------------------------------
+
 # blocked_gibbs_sampler: sample tau, mu, pi, z| y
 #' @export
 bgs <- function(y, k, al, a_tau, b_tau, a_mu, kap, burnin, num_samples) {
@@ -268,5 +296,3 @@ b_get_nu <- function(k, al, z_info) {
 #---------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------
-
-#density <- function(pi, mu, tau, y)
