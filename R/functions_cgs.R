@@ -4,7 +4,7 @@ c_cgs <- function(y, al, a_mu, kap, a_tau, b_tau, burnin, num_samples) {
 
     # initialize sampler
     n <- length(y)
-    s <- 1:n
+    s <- rep(1,n)
     samples <- vector("list", num_samples)
 
     # burnin
