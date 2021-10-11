@@ -150,9 +150,9 @@ b_get_n <- function(k, z_info) {
         }
     }
 
-    if (sum(n) != 6) {
-        stop("sum of n must equal length of y")
-    }
+    # if (sum(n) != length(y)) {
+    #     stop("sum of n must equal length of y")
+    # }
 
     return(n)
 }
@@ -270,8 +270,12 @@ b_get_z <- function(y, pi, mu, tau) {
         for (j in 1:k) {
             p = pi * dnorm(y[i], mu, sqrt(tau^(-1)))
         }
+        #p[which(is.na(p))] <- 0
+        p[which(is.infinite(p))] <- 0
         p <- p / sum(p)
-        b_check_normalized(p)
+        #f_check_normalized(p)
+        p[which(is.na(p))] <- 0
+        #print(p)
         z[i] <- sample(1:k, 1, replace = TRUE, prob = p)
     }
 

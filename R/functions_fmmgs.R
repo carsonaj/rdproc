@@ -68,6 +68,7 @@ fmmgs <- function(y, k, al, a_tau, b_tau, a_mu, kap, burnin, num_samples) {
 
     # burnin iterations
     for (i in 1:burnin) {
+        #print(i)
         pi <- f_get_pi(k, z_info, al)
         z <- f_get_z(y, pi, mu, tau)
         z_info <- f_get_z_info(z, y)
@@ -79,6 +80,7 @@ fmmgs <- function(y, k, al, a_tau, b_tau, a_mu, kap, burnin, num_samples) {
 
     # sample iterations
     for (i in 1:num_samples) {
+        #print(i)
         pi <- f_get_pi(k, z_info, al)
         z <- f_get_z(y, pi, mu, tau)
         z_info <- f_get_z_info(z, y)
@@ -106,7 +108,7 @@ f_check_length <- function(z, y) {
 #---------------------------------------------------------------------------------------
 
 f_check_normalized <- function(p) {
-    if (abs(sum(p) - 1) > .001) {
+    if (abs(sum(p) - 1) > .01) {
         stop("argument must be normalized")
     }
 }
@@ -256,14 +258,20 @@ f_get_z <- function(y, pi, mu, tau) {
     k <- length(pi)
     n <- length(y)
     z <- rep(0, n)
+    #print("pi is")
+    #print(pi)
 
     for (i in 1:n) {
         p <- rep(0, k)
         for (j in 1:k) {
             p = pi * dnorm(y[i], mu, sqrt(tau^(-1)))
         }
+        #p[which(is.na(p))] <- 0
+        p[which(is.infinite(p))] <- 0
         p <- p / sum(p)
-        f_check_normalized(p)
+        #f_check_normalized(p)
+        p[which(is.na(p))] <- 0
+        #print(p)
         z[i] <- sample(1:k, 1, replace = TRUE, prob = p)
     }
 
